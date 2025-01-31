@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,20 +7,27 @@
     <title>Image to PDF Converter</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"></link>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script> <!-- Add jsPDF CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script> <!-- Add SortableJS CDN -->
     <style>
         /* Base Styles */
         body {
             font-family: 'Roboto', sans-serif;
-            background-color: #f4f4f9; /* Lighter background from Toolkit */
+            background-color: #f4f4f9;
             color: #333;
             animation: fadeIn 1s ease-in-out;
             margin: 0;
             padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
         }
 
         /* Header */
         header {
-            background: #6200ea; /* Matching the purple from Toolkit */
+            background: #6200ea;
             color: white;
             padding: 0.5rem 1rem;
             position: sticky;
@@ -38,26 +46,20 @@
             font-size: 1rem;
             color: white;
             transition: color 0.3s ease;
-            margin-left: 1rem; /* Added space between links */
+            margin-left: 1rem;
         }
 
         header a:hover {
-            color: #ffd600; /* Hover effect from Toolkit */
-        }
-
-        /* Fade-in animation */
-        @keyframes fadeIn {
-            0% { opacity: 0; }
-            100% { opacity: 1; }
+            color: #ffd600;
         }
 
         /* Main Section */
         .bg-white {
-            background-color: white; /* Keeping this the same for card background */
+            background-color: white;
         }
 
         button {
-            background-color: #6200ea; /* Purple button color */
+            background-color: #6200ea;
             color: white;
             padding: 0.75rem 1.5rem;
             border-radius: 20px;
@@ -67,14 +69,14 @@
         }
 
         button:hover {
-            background-color: #3700b3; /* Darker purple hover */
+            background-color: #3700b3;
             transform: scale(1.05);
         }
 
         /* Drop area style */
         #drop-area {
-            border: 4px dashed #6200ea; /* Border color matches header */
-            background-color: #f4f4f9; /* Subtle background to match the page */
+            border: 4px dashed #6200ea;
+            background-color: #f4f4f9;
             color: #6200ea;
             padding: 6rem;
             border-radius: 8px;
@@ -87,17 +89,26 @@
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
-        /* Responsive Adjustments */
-        @media (max-width: 768px) {
-            .container {
-                grid-template-columns: 1fr;
-            }
+        /* Convert Button Style (Smaller) */
+        #convert-btn {
+            background-color: #6200ea;
+            color: white;
+            padding: 0.75rem 1.5rem; /* Reduced padding for smaller size */
+            font-size: 1rem; /* Reduced font size */
+            border-radius: 20px; /* Rounded corners */
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+            margin-top: 2rem;
+            width: 100%;
+            max-width: 250px; /* Optional max-width for the button */
+            display: inline-block;
+            text-align: center;
         }
 
-        @media (max-width: 480px) {
-            .container {
-                grid-template-columns: 1fr;
-            }
+        #convert-btn:hover {
+            background-color: #3700b3;
+            transform: scale(1.05);
         }
     </style>
 </head>
@@ -107,14 +118,13 @@
         <div class="container">
             <h1 class="text-2xl font-bold text-white">Image to PDF Converter</h1>
             <nav class="flex items-center">
-                <!-- Home button links to index.html -->
                 <a href="index.html" class="text-white mr-4 hover:underline">Home</a>
                 <a href="about.html" class="text-white hover:underline">About Us</a>
             </nav>
         </div>
     </header>
 
-    <main class="flex-1 w-full max-w-4xl mx-auto mt-8"> <!-- Removed excessive margin-top -->
+    <main class="flex-1 w-full max-w-4xl mx-auto mt-8">
         <div class="bg-white p-6 rounded-lg shadow-lg">
             <div class="mb-4">
                 <label class="block text-gray-700 text-sm font-bold mb-2" for="file-upload">
@@ -131,6 +141,7 @@
     </main>
 
     <script>
+        const { jsPDF } = window.jspdf; // Destructure jsPDF from window.jspdf
         const dropArea = document.getElementById('drop-area');
         const fileUpload = document.getElementById('file-upload');
         const imageList = document.getElementById('image-list');
@@ -182,27 +193,30 @@
                 imageItem.draggable = true;
                 imageItem.innerHTML = `
                     <div class="absolute top-0 left-0 bg-blue-600 text-white text-xs font-bold px-2 py-1 rounded-br-lg">${index + 1}</div>
-                    <img src="${image.src}" alt="Uploaded image ${index + 1}" class="w-full h-auto object-cover rounded-lg shadow-lg">
+                    <div class="absolute top-0 right-0 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-tl-lg cursor-pointer" onclick="removeImage(${index})">X</div>
+                    <img src="${image.src}" alt="Uploaded image ${index + 1}" class="w-full h-auto object-cover rounded-lg shadow-lg" data-index="${index}">
                 `;
                 imageList.appendChild(imageItem);
-
-                imageItem.addEventListener('dragstart', (event) => {
-                    event.dataTransfer.setData('text/plain', index);
-                });
-
-                imageItem.addEventListener('dragover', (event) => {
-                    event.preventDefault();
-                });
-
-                imageItem.addEventListener('drop', (event) => {
-                    event.preventDefault();
-                    const draggedIndex = event.dataTransfer.getData('text/plain');
-                    const targetIndex = index;
-                    [images[draggedIndex], images[targetIndex]] = [images[targetIndex], images[draggedIndex]];
-                    updateImageList();
-                });
             });
         }
+
+        function removeImage(index) {
+            images.splice(index, 1);
+            updateImageList();
+        }
+
+        // Initialize sortable functionality
+        const sortable = new Sortable(imageList, {
+            animation: 150,
+            onEnd(evt) {
+                const orderedImages = [];
+                imageList.querySelectorAll('.draggable').forEach((item, index) => {
+                    const imageIndex = item.querySelector('img').getAttribute('data-index');
+                    orderedImages.push(images[imageIndex]);
+                });
+                images = orderedImages;
+            }
+        });
 
         convertBtn.addEventListener('click', () => {
             if (images.length === 0) {
@@ -210,15 +224,14 @@
                 return;
             }
 
-            const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
             images.forEach((image, index) => {
                 if (index > 0) doc.addPage();
                 doc.addImage(image.src, 'JPEG', 10, 10, 180, 160);
             });
+
             doc.save('images.pdf');
         });
     </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.3.1/jspdf.umd.min.js"></script>
 </body>
 </html>
