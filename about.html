@@ -1,0 +1,230 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - Toolkit</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* Base Styles */
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+            overflow-x: hidden;
+        }
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+        h1, h2, p {
+            margin: 0;
+        }
+
+        /* Header */
+        header {
+            background: #6200ea;
+            color: white;
+            padding: 0.5rem 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            animation: slideInTop 1s ease-out forwards;
+        }
+
+        @keyframes slideInTop {
+            0% {
+                opacity: 0;
+                transform: translateY(-100px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 20px #ff00ff, 0 0 30px #ff00ff;
+        }
+        header nav {
+            display: flex;
+            gap: 1rem;
+        }
+        header nav a {
+            font-size: 1rem;
+            color: white;
+            position: relative;
+            display: inline-block;
+            transition: transform 0.3s ease, color 0.3s ease;
+        }
+        header nav a:hover {
+            animation: bounce 0.8s ease;
+            transform: scale(1.2);
+            color: #ffd600;
+        }
+
+        /* Animations */
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+
+        /* About Us Section */
+        .about-us {
+            padding: 2rem 1rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .about-us h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        .about-us p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+        .about-us h3 {
+            font-size: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        /* Team Members Section */
+        .team-members {
+            display: flex;
+            justify-content: space-between;
+            gap: 1.5rem;
+            margin-top: 3rem;
+        }
+        .team-members .member {
+            text-align: center;
+            width: 30%;
+            opacity: 0;
+            animation: fadeIn 1s forwards;
+        }
+        .team-members .member img {
+            width: 100%;
+            height: auto;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+        }
+        .team-members .member img:hover {
+            transform: scale(1.1);
+        }
+        .team-members .member h4 {
+            font-size: 1.2rem;
+            margin-top: 1rem;
+            color: #6200ea;
+        }
+        .team-members .member p {
+            font-size: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Footer */
+        footer {
+            background: #6200ea;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <h1>Toolkit</h1>
+            <nav>
+                <a href="index.html">Home</a>
+                <a href="about.html">About Us</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- About Us Section -->
+    <section class="about-us">
+        <h2>Welcome to Toolkit</h2>
+        <p>Toolkit is your go-to platform for simplifying your digital tasks. Whether you need to edit PDFs, resize images, or edit audio files, we’ve got the tools you need—all in one place. We also offer unique features like resume creation and classic games to add a bit of fun and productivity to your day.</p>
+
+        <h3>Our Mission</h3>
+        <p>Our mission is simple: to make digital file management and editing as easy as possible for everyone. We understand that time is valuable, and we’re here to save you time with intuitive, easy-to-use tools.</p>
+
+        <h3>Why Choose Toolkit?</h3>
+        <p>At Toolkit, we’re dedicated to providing reliable, secure, and efficient solutions for all your digital needs. Join thousands of users who trust Toolkit for their everyday tasks. We’re constantly improving and updating our tools to ensure you get the best possible experience.</p>
+
+        <!-- Team Members Section -->
+        <div class="team-members">
+            <div class="member">
+                <img src="https://drive.google.com/thumbnail?id=1SDHri-CGgLlmR5mer8AKzIEQqpulVoMa&sz=s800" alt="Shivam">
+                <h4>Shivam</h4>
+                <p>CEO & Founder</p>
+            </div>
+            <div class="member">
+                <img src="https://drive.google.com/thumbnail?id=1nPtrsDAEgBviFF4ReAGkrWv1Y3Yqgix9&sz=s800" alt="Vipul">
+                <h4>Vipul</h4>
+                <p>CTO</p>
+            </div>
+            <div class="member">
+                <img src="https://drive.google.com/thumbnail?id=1ys02Wy1isGi7r3HMynUXskNXlN_7XwN-&sz=s800" alt="Nilesh">
+                <h4>Nilesh</h4>
+                <p>Lead Developer</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 Toolkit. All rights reserved.</p>
+    </footer>
+
+    <!-- GSAP CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <script>
+        // GSAP Animations
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Header animation
+        gsap.from("header", { y: -100, opacity: 0, duration: 1 });
+
+        // About Us section animation
+        gsap.from(".about-us h2", { opacity: 0, y: 50, duration: 1, delay: 0.3 });
+        gsap.from(".about-us p", { opacity: 0, y: 50, duration: 1, delay: 0.6 });
+        gsap.from(".about-us h3", { opacity: 0, y: 50, duration: 1, delay: 0.9 });
+
+        // Footer animation
+        gsap.from("footer", { opacity: 0, y: 50, duration: 1, delay: 1.2 });
+    </script>
+</body>
+</html>

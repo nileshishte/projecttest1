@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image to PDF Converter</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"></link>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script> <!-- Add jsPDF CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script> <!-- Add SortableJS CDN -->
+    <style>
+        /* Base Styles */
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            animation: fadeIn 1s ease-in-out;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+        }
+
+        /* Header */
+        header {
+            background: #6200ea;
+            color: white;
+            padding: 0.5rem 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header a {
+            font-size: 1rem;
+            color: white;
+            transition: color 0.3s ease;
+            margin-left: 1rem;
+        }
+
+        header a:hover {
+            color: #ffd600;
+        }
+
+        /* Main Section */
+        .bg-white {
+            background-color: white;
+        }
+
+        button {
+            background-color: #6200ea;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        button:hover {
+            background-color: #3700b3;
+            transform: scale(1.05);
+        }
+
+        /* Drop area style */
+        #drop-area {
+            border: 4px dashed #6200ea;
+            background-color: #f4f4f9;
+            color: #6200ea;
+            padding: 6rem;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        /* Image List */
+        .draggable img {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Convert Button Style (Smaller) */
+        #convert-btn {
+            background-color: #6200ea;
+            color: white;
+            padding: 0.75rem 1.5rem; /* Reduced padding for smaller size */
+            font-size: 1rem; /* Reduced font size */
+            border-radius: 20px; /* Rounded corners */
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+            margin-top: 2rem;
+            width: 100%;
+            max-width: 250px; /* Optional max-width for the button */
+            display: inline-block;
+            text-align: center;
+        }
+
+        #convert-btn:hover {
+            background-color: #3700b3;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col items-center p-4">
+    <!-- Navigation Header -->
+    <header>
+        <div class="container">
+            <h1 class="text-2xl font-bold text-white">Image to PDF Converter</h1>
+            <nav class="flex items-center">
+                <a href="index.html" class="text-white mr-4 hover:underline">Home</a>
+                <a href="about.html" class="text-white hover:underline">About Us</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="flex-1 w-full max-w-4xl mx-auto mt-8">
+        <div class="bg-white p-6 rounded-lg shadow-lg">
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="file-upload">
+                    Upload Images
+                </label>
+                <input id="file-upload" type="file" accept="image/*" multiple class="hidden">
+                <div id="drop-area" class="cursor-pointer">
+                    Drag & Drop Images Here or Click to Upload
+                </div>
+            </div>
+            <div id="image-list" class="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+            <button id="convert-btn" class="mt-6 w-full py-2 rounded-lg font-bold hover:bg-blue-700">Convert to PDF</button>
+        </div>
+    </main>
+
+    <script>
+        const { jsPDF } = window.jspdf; // Destructure jsPDF from window.jspdf
+        const dropArea = document.getElementById('drop-area');
+        const fileUpload = document.getElementById('file-upload');
+        const imageList = document.getElementById('image-list');
+        const convertBtn = document.getElementById('convert-btn');
+        let images = [];
+
+        dropArea.addEventListener('click', () => {
+            fileUpload.click();
+        });
+
+        dropArea.addEventListener('dragover', (event) => {
+            event.preventDefault();
+            dropArea.classList.add('bg-gray-200');
+        });
+
+        dropArea.addEventListener('dragleave', () => {
+            dropArea.classList.remove('bg-gray-200');
+        });
+
+        dropArea.addEventListener('drop', (event) => {
+            event.preventDefault();
+            dropArea.classList.remove('bg-gray-200');
+            handleFiles(event.dataTransfer.files);
+        });
+
+        fileUpload.addEventListener('change', (event) => {
+            handleFiles(event.target.files);
+        });
+
+        function handleFiles(files) {
+            for (let file of files) {
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        images.push({ src: event.target.result, name: file.name });
+                        updateImageList();
+                    };
+                    reader.readAsDataURL(file);
+                }
+            }
+        }
+
+        function updateImageList() {
+            images.sort((a, b) => a.name.localeCompare(b.name));
+            imageList.innerHTML = '';
+            images.forEach((image, index) => {
+                const imageItem = document.createElement('div');
+                imageItem.className = 'relative draggable';
+                imageItem.draggable = true;
+                imageItem.innerHTML = `
+                    <div class="absolute top-0 left-0 bg-blue-600 text-white text-xs font-bold px-2 py-1 rounded-br-lg">${index + 1}</div>
+                    <div class="absolute top-0 right-0 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-tl-lg cursor-pointer" onclick="removeImage(${index})">X</div>
+                    <img src="${image.src}" alt="Uploaded image ${index + 1}" class="w-full h-auto object-cover rounded-lg shadow-lg" data-index="${index}">
+                `;
+                imageList.appendChild(imageItem);
+            });
+        }
+
+        function removeImage(index) {
+            images.splice(index, 1);
+            updateImageList();
+        }
+
+        // Initialize sortable functionality
+        const sortable = new Sortable(imageList, {
+            animation: 150,
+            onEnd(evt) {
+                const orderedImages = [];
+                imageList.querySelectorAll('.draggable').forEach((item, index) => {
+                    const imageIndex = item.querySelector('img').getAttribute('data-index');
+                    orderedImages.push(images[imageIndex]);
+                });
+                images = orderedImages;
+            }
+        });
+
+        convertBtn.addEventListener('click', () => {
+            if (images.length === 0) {
+                alert('Please upload some images first.');
+                return;
+            }
+
+            const doc = new jsPDF();
+            images.forEach((image, index) => {
+                if (index > 0) doc.addPage();
+                doc.addImage(image.src, 'JPEG', 10, 10, 180, 160);
+            });
+
+            doc.save('images.pdf');
+        });
+    </script>
+</body>
+</html>
